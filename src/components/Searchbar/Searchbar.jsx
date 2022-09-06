@@ -6,6 +6,9 @@ function Searchbar(props) {
       <form
         className="SearchForm"
         onSubmit={evt => {
+          if (!evt.currentTarget.inputName.value.trim()) {
+            return;
+          }
           evt.preventDefault();
           props.onSubmit(evt.currentTarget.inputName.value);
           evt.currentTarget.inputName.value = '';

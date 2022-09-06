@@ -4,22 +4,32 @@ import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 import Button from './Button/Button';
+import Modal from './Modal/Modal';
 
 export class App extends Component {
   state = {
     searchText: '',
     page: 1,
-    total: 0,
+    images: [],
+    largeImageURL: '',
+  };
+
+  toggleModal = url => {
+    this.setState({ largeImageURL: url });
+  };
+
+  onModalClose = () => {
+    this.setState({ largeImageURL: '' });
   };
 
   onSubmit = searchText => {
     if (this.state.searchText !== searchText) {
-      this.setState({ searchText, page: 1, total: 0 });
+      this.setState({ searchText, page: 1, images: [] });
     }
   };
 
-  onUpdate = total => {
-    this.setState({ total });
+  onUpdate = images => {
+    this.setState({ images });
   };
 
   onClickLoadMore = () => {
@@ -29,17 +39,26 @@ export class App extends Component {
   };
 
   render() {
+    const { searchText, page, images, largeImageURL } = this.state;
     return (
       <div className="App">
+        {this.state.largeImageURL && (
+          <Modal
+            largeImageURL={largeImageURL}
+            onModalClose={this.onModalClose}
+          />
+        )}
         <Searchbar onSubmit={this.onSubmit} />
         <ImageGallery>
           <ImageGalleryItem
-            searchText={this.state.searchText}
-            page={this.state.page}
+            searchText={searchText}
+            page={page}
+            images={images}
             onUpdate={this.onUpdate}
+            modalShow={this.toggleModal}
           />
         </ImageGallery>
-        <Button onClick={this.onClickLoadMore} />
+        {!images.length || <Button onClick={this.onClickLoadMore} />}
       </div>
     );
   }
